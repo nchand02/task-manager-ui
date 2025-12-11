@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import taskService from '../../services/taskService';
+import { sanitizeInput } from '../../utils/validation';
 
 const TaskForm = ({ onTaskCreated }) => {
   const [formData, setFormData] = useState({
@@ -16,19 +17,34 @@ const TaskForm = ({ onTaskCreated }) => {
     });
   };
 
+  const validateTaskData = (title, description) => {
+    if (!title || !title.trim()) {
+      throw new Error('Task title is required');
+    }
+    if (title.trim().length > 200) {
+      throw new Error('Task title is too long (maximum 200 characters)');
+    }
+    if (description && description.trim().length > 1000) {
+      throw new Error('Task description is too long (maximum 1000 characters)');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      if (!formData.title.trim()) {
-        throw new Error('Task title is required');
-      }
+      // Sanitize inputs to prevent XSS
+      const sanitizedTitle = sanitizeInput(formData.title);
+      const sanitizedDescription = sanitizeInput(formData.description);
+      
+      // Validate
+      validateTaskData(sanitizedTitle, sanitizedDescription);
 
       const newTask = await taskService.createTask({
-        title: formData.title.trim(),
-        description: formData.description.trim(),
+        title: sanitizedTitle.trim(),
+        description: sanitizedDescription.trim(),
         completed: false,
       });
 

@@ -13,9 +13,11 @@ const taskService = {
    */
   getAuthHeaders: () => {
     const token = authService.getToken();
+    // Validate token format before using it to prevent injection attacks
+    const isValidToken = token && typeof token === 'string' && token.length > 0 && token.length < 2048;
     return {
       'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` }),
+      ...(isValidToken && { 'Authorization': `Bearer ${token}` }),
     };
   },
 

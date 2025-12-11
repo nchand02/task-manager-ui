@@ -30,8 +30,13 @@ const authService = {
 
     const data = await response.json();
     
-    // Store token securely (consider using httpOnly cookies in production)
-    if (data.token) {
+    // Store token securely
+    // WARNING: sessionStorage is vulnerable to XSS attacks
+    // For production, implement one of these alternatives:
+    // 1. Use httpOnly, secure cookies (recommended - requires backend support)
+    // 2. Store in memory only and require re-authentication on page refresh
+    // 3. Use a secure token storage library
+    if (data.token && typeof data.token === 'string') {
       sessionStorage.setItem('authToken', data.token);
     }
 

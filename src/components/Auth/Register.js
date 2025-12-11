@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import authService from '../../services/authService';
+import { isValidEmail, validatePassword, validateUsername } from '../../utils/validation';
 
 const Register = ({ onRegisterSuccess }) => {
   const [formData, setFormData] = useState({
@@ -19,23 +20,27 @@ const Register = ({ onRegisterSuccess }) => {
   };
 
   const validateForm = () => {
-    if (!formData.username.trim()) {
-      throw new Error('Username is required');
+    // Validate username
+    const usernameValidation = validateUsername(formData.username);
+    if (!usernameValidation.isValid) {
+      throw new Error(usernameValidation.message);
     }
+    
+    // Validate email
     if (!formData.email.trim()) {
       throw new Error('Email is required');
     }
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!isValidEmail(formData.email)) {
       throw new Error('Invalid email format');
     }
-    if (!formData.password) {
-      throw new Error('Password is required');
+    
+    // Validate password
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.message);
     }
-    if (formData.password.length < 8) {
-      throw new Error('Password must be at least 8 characters long');
-    }
+    
+    // Validate password confirmation
     if (formData.password !== formData.confirmPassword) {
       throw new Error('Passwords do not match');
     }

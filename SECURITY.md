@@ -29,11 +29,28 @@
 ### API Security
 - [ ] Implement authentication and authorization
 - [ ] Use secure session management
-- [ ] Validate and sanitize all user inputs
+- [ ] Validate and sanitize all user inputs (implemented in utils/validation.js)
 - [ ] Implement rate limiting on API endpoints
 - [ ] Use HTTPS for all API communications
 - [ ] Implement proper CORS configuration
 - [ ] Never expose sensitive data in API responses
+
+### Authentication Token Storage
+**IMPORTANT**: The current implementation stores authentication tokens in `sessionStorage`, which is vulnerable to XSS attacks. For production deployment, implement one of these alternatives:
+
+1. **httpOnly Cookies (Recommended)**: Store tokens in httpOnly, secure cookies set by the backend
+   - Requires backend API changes to set cookies
+   - Immune to XSS attacks
+   - Must implement CSRF protection
+
+2. **Memory-only Storage**: Store tokens only in React state
+   - More secure against XSS
+   - Requires re-authentication on page refresh
+   - Better user experience with refresh tokens
+
+3. **Secure Token Storage Library**: Use a library designed for secure token storage
+   - Consider libraries like `secure-web-storage`
+   - Evaluate security trade-offs carefully
 
 ### Monitoring and Logging
 - [ ] Set up application monitoring
