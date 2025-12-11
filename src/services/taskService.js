@@ -1,4 +1,5 @@
 import authService from './authService';
+import { isValidTokenFormat } from '../utils/validation';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
@@ -14,7 +15,7 @@ const taskService = {
   getAuthHeaders: () => {
     const token = authService.getToken();
     // Validate token format before using it to prevent injection attacks
-    const isValidToken = token && typeof token === 'string' && token.length > 0 && token.length < 2048;
+    const isValidToken = token && isValidTokenFormat(token);
     return {
       'Content-Type': 'application/json',
       ...(isValidToken && { 'Authorization': `Bearer ${token}` }),

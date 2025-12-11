@@ -87,6 +87,10 @@ export const validateUsername = (username) => {
 
 /**
  * Sanitizes string input to prevent XSS
+ * NOTE: This is a basic sanitization function. For production applications
+ * that need to handle rich text or HTML content, use a dedicated library
+ * like DOMPurify for comprehensive XSS protection.
+ * 
  * @param {string} input - Input string to sanitize
  * @returns {string} Sanitized string
  */
@@ -96,5 +100,66 @@ export const sanitizeInput = (input) => {
   }
   
   // Remove any HTML tags
-  return input.replace(/<[^>]*>/g, '').trim();
+  let sanitized = input.replace(/<[^>]*>/g, '');
+  
+  // Escape HTML entities to prevent entity-based XSS
+  sanitized = sanitized
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+  
+  return sanitized.trim();
+};
+
+/**
+ * Validates JWT token format
+ * Basic validation to ensure token structure is correct
+ * Does NOT verify signature - that should be done on the server
+ * 
+ * @param {string} token - JWT token to validate
+ * @returns {boolean} True if token format is valid
+ */
+export const isValidJWTFormat = (token) => {
+  if (!token || typeof token !== 'string') {
+    return false;
+  }
+  
+  // JWT tokens should be in format: header.payload.signature
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return false;
+  }
+  
+  // Each part should be base64url encoded (alphanumeric, -, _)
+  const base64UrlPattern = /^[A-Za-z0-9_-]+$/;
+  return parts.every(part => part.length > 0 && base64UrlPattern.test(part));
+};
+
+/**
+ * Validates token format (supports JWT or opaque tokens)
+ * @param {string} token - Authentication token to validate
+ * @returns {boolean} True if token format is valid
+ */
+export const isValidTokenFormat = (token) => {
+  if (!token || typeof token !== 'string') {
+    return false;
+  }
+  
+  // Check length constraints
+  if (token.length < 1 || token.length > 2048) {
+    return false;
+  }
+  
+  // If it looks like a JWT, validate JWT format
+  if (token.includes('.')) {
+    return isValidJWTFormat(token);
+  }
+  
+  // For opaque tokens, just ensure it's alphanumeric with some special chars
+  // Adjust this pattern based on your API's token format
+  const opaqueTokenPattern = /^[A-Za-z0-9_-]+$/;
+  return opaqueTokenPattern.test(token);
 };
