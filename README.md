@@ -1,6 +1,30 @@
-# Getting Started with Create React App
+# Task Manager UI
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+
+### Installation
+
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Copy `.env.example` to `.env` and configure your environment variables
+4. Run `npm start` to start the development server
+
+### Environment Variables
+
+Create a `.env` file in the root directory based on `.env.example`:
+
+```
+REACT_APP_API_URL=http://localhost:8080
+```
+
+For production, use HTTPS URLs.
 
 ## Available Scripts
 
@@ -68,3 +92,17 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Security
+
+See [SECURITY.md](./SECURITY.md) for security guidelines and production deployment checklist.
+
+### Quick Security Checklist
+
+Before deploying to production:
+- [ ] Run `npm audit` and address all vulnerabilities
+- [ ] Configure environment variables (never commit `.env` files)
+- [ ] Enable HTTPS/TLS
+- [ ] Configure security headers on your web server
+- [ ] Implement proper authentication and authorization
+- [ ] Review [SECURITY.md](./SECURITY.md) for complete guidelines
